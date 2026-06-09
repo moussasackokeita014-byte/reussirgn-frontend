@@ -1,13 +1,128 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ReussirGN – Assistant scolaire guinéen</title>
+<title>ReussirGN</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500&display=swap');
-:root{--vert:#1B8A4C;--jaune:#F5C518;--rouge:#CE1126;--fond:#F7F9F7;--blanc:#ffffff;--texte:#1a1a1a;--gris:#6b7280;--bordure:#e5e7eb;}
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@700&family=Inter:wght@400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--fond);color:var(--texte);min-height:100vh;}
+body{font-family:'Inter',sans-serif;background:#F7F9F7;color:#1a1a1a;}
+header{background:#1B8A4C;padding:16px 20px;display:flex;align-items:center;gap:12px;}
+.flag{display:flex;gap:3px;height:26px;}
+.flag span{width:9px;border-radius:2px;}
+.r{background:#CE1126;}.j{background:#F5C518;}.v{background:#228B22;}
+header h1{font-family:'Sora',sans-serif;font-size:21px;color:white;font-weight:700;}
+header p{font-size:12px;color:rgba(255,255,255,0.8);}
+.hero{background:linear-gradient(135deg,#1B8A4C,#145f35);padding:28px 20px 40px;text-align:center;color:white;}
+.hero h2{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.hero h2 span{color:#F5C518;}
+.hero p{font-size:13px;opacity:.85;}
+.card{background:white;margin:-20px 16px 0;border-radius:16px;padding:22px 18px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+.card h3{font-family:'Sora',sans-serif;font-size:15px;color:#1B8A4C;margin-bottom:14px;}
+label{display:block;font-size:13px;font-weight:500;color:#6b7280;margin:12px 0 5px;}
+select,textarea{width:100%;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;background:#F7F9F7;outline:none;}
+select:focus,textarea:focus{border-color:#1B8A4C;}
+textarea{resize:none;min-height:85px;}
+button{width:100%;margin-top:18px;padding:13px;background:#1B8A4C;color:white;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+button:disabled{background:#9ca3af;}
+.loader{display:none;text-align:center;padding:28px;color:#6b7280;font-size:14px;}
+.loader.on{display:block;}
+.spin{width:34px;height:34px;border:3px solid #e5e7eb;border-top-color:#1B8A4C;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rep{background:white;margin:18px 16px;border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,0.08);display:none;}
+.rep.on{display:block;}
+.rep-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e7eb;}
+.dot{width:9px;height:9px;background:#1B8A4C;border-radius:50%;}
+.rep-head span{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:#1B8A4C;}
+.rep-body{font-size:14px;line-height:1.8;white-space:pre-wrap;}
+.err{margin:14px 16px;padding:13px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;color:#b91c1c;font-size:13px;display:none;}
+.err.on{display:block;}
+.tags-box{margin:18px 16px 0;}
+.tags-box h4{font-size:13px;color:#6b7280;margin-bottom:8px;}
+.tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{padding:5px 11px;background:white;border:1.5px solid #e5e7eb;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;}
+.tag:hover{border-color:#1B8A4C;color:#1B8A4C;}
+footer{text-align:center;padding:22px 16px;color:#6b7280;font-size:12px;}
+footer strong{color:#1B8A4C;}
 </style>
 </head>
+<body>
+<header>
+<div class="flag"><span class="r"></span><span class="j"></span><span class="v"></span></div>
+<div><h1>ReussirGN</h1><p>Assistant scolaire guinéen</p></div>
+</header>
+<div class="hero">
+<h2>Apprends mieux,<br><span>réussis plus</span> 🎓</h2>
+<p>Programme officiel guinéen — 7ème à Terminale</p>
+</div>
+<div class="card">
+<h3>📚 Pose ta question</h3>
+<label>Ta classe</label>
+<select id="classe">
+<option value="">-- Choisis ta classe --</option>
+<option>7ème</option><option>8ème</option><option>9ème</option>
+<option>10ème</option><option>11ème</option><option>Terminale</option>
+</select>
+<label>Matière</label>
+<select id="matiere">
+<option value="">-- Choisis la matière --</option>
+<option>Maths</option><option>Physique</option><option>Chimie</option>
+<option>Biologie</option><option>Français</option><option>Histoire</option>
+<option>Géographie</option><option>ECM</option><option>Anglais</option>
+<option>Géologie</option><option>Économie</option><option>Philosophie</option>
+</select>
+<label>Ta question</label>
+<textarea id="question" placeholder="Ex: Explique-moi la respiration des animaux..."></textarea>
+<button id="btn" onclick="envoyer()">Envoyer ma question ✨</button>
+</div>
+<div class="loader" id="loader"><div class="spin"></div>ReussirGN réfléchit...</div>
+<div class="err" id="err"></div>
+<div class="rep" id="rep">
+<div class="rep-head"><div class="dot"></div><span>Réponse de ReussirGN</span></div>
+<div class="rep-body" id="rep-body"></div>
+</div>
+<div class="tags-box">
+<h4>Questions fréquentes :</h4>
+<div class="tags">
+<div class="tag" onclick="fill('9ème','Chimie','Structure de l\'atome')">⚗️ Atome</div>
+<div class="tag" onclick="fill('10ème','Physique','Lentille convergente')">🔭 Optique</div>
+<div class="tag" onclick="fill('Terminale','Maths','Les limites de fonctions')">📐 Limites</div>
+<div class="tag" onclick="fill('7ème','Biologie','Comment les plantes se nourrissent')">🌿 Plantes</div>
+<div class="tag" onclick="fill('8ème','Histoire','Empire du Mali')">🏛️ Mali</div>
+</div>
+</div>
+<footer><p>Fait avec ❤️ pour les élèves de <strong>Guinée</strong></p></footer>
+<script>
+const API="https://generateur-ia-api.onrender.com/ask";
+function fill(c,m,q){document.getElementById('classe').value=c;document.getElementById('matiere').value=m;document.getElementById('question').value=q;}
+async function envoyer(){
+const c=document.getElementById('classe').value;
+const m=document.getElementById('matiere').value;
+const q=document.getElementById('question').value.trim();
+if(!c){alert('Choisis ta classe !');return;}
+if(!m){alert('Choisis ta matière !');return;}
+if(!q){alert('Écris ta question !');return;}
+document.getElementById('btn').disabled=true;
+document.getElementById('loader').classList.add('on');
+document.getElementById('rep').classList.remove('on');
+document.getElementById('err').classList.remove('on');
+try{
+const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({classe:c,matiere:m,question:q})});
+if(!r.ok)throw new Error('Erreur '+r.status);
+const d=await r.json();
+document.getElementById('rep-body').textContent=d.reponse;
+document.getElementById('rep').classList.add('on');
+document.getElementById('rep').scrollIntoView({behavior:'smooth'});
+}catch(e){
+const el=document.getElementById('err');
+el.textContent='❌ '+e.message;
+el.classList.add('on');
+}finally{
+document.getElementById('loader').classList.remove('on');
+document.getElementById('btn').disabled=false;
+}}
+</script>
+</body>
+</html>
