@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -47,11 +46,10 @@ button:disabled{background:#9ca3af;}
 .tag:hover{border-color:#1B8A4C;color:#1B8A4C;}
 footer{text-align:center;padding:22px 16px;color:#6b7280;font-size:12px;}
 footer strong{color:#1B8A4C;}
-
-/* Navigation entre les parties */
 .view{display:none;}
 .view.on{display:block;}
 .menu{margin:-20px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.menu.below{margin-top:14px;}
 .mcard{display:block;background:white;border:1.5px solid #e5e7eb;border-radius:16px;padding:20px 14px;text-align:center;text-decoration:none;color:#1a1a1a;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
 .mcard:active{border-color:#1B8A4C;}
 .mcard .ic{display:block;font-size:30px;margin-bottom:8px;}
@@ -60,6 +58,12 @@ footer strong{color:#1B8A4C;}
 .mcard .soon{display:inline-block;margin-top:8px;padding:2px 9px;background:#FEF6D8;color:#8a6d00;border-radius:20px;font-size:11px;font-weight:500;}
 .back{display:inline-block;margin-bottom:12px;font-size:13px;font-weight:500;color:#1B8A4C;text-decoration:none;}
 .soon-text{font-size:14px;line-height:1.7;color:#374151;}
+.pad{margin:14px 16px;}
+.list{margin:14px 16px 0;}
+.chap{display:block;background:white;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:10px;text-decoration:none;color:#1a1a1a;font-size:14px;line-height:1.5;}
+.chap b{color:#1B8A4C;}
+.libre{text-align:center;margin:18px 16px 0;font-size:13px;}
+.libre a{color:#1B8A4C;text-decoration:none;font-weight:500;}
 </style>
 </head>
 <body>
@@ -72,7 +76,6 @@ footer strong{color:#1B8A4C;}
 <p>Programme officiel guinéen — 7ème à Terminale</p>
 </div>
 
-<!-- ACCUEIL -->
 <div class="view on" id="v-home">
 <div class="menu">
 <a class="mcard" href="#etude"><span class="ic">📚</span><b>Étude</b><small>Cours, exercices et questions</small></a>
@@ -82,11 +85,12 @@ footer strong{color:#1B8A4C;}
 </div>
 </div>
 
-<!-- ÉTUDE -->
-<div class="view" id="v-etude">
+<div class="view" id="v-etude"><div id="etude-box"></div></div>
+
+<div class="view" id="v-libre">
 <div class="card">
-<a class="back" href="#">← Accueil</a>
-<h3>📚 Pose ta question</h3>
+<a class="back" href="#etude">← Retour</a>
+<h3>💬 Pose ta question</h3>
 <label>Ta classe</label>
 <select id="classe">
 <option value="">-- Choisis ta classe --</option>
@@ -123,7 +127,6 @@ footer strong{color:#1B8A4C;}
 </div>
 </div>
 
-<!-- LANGUES -->
 <div class="view" id="v-langues">
 <div class="card">
 <a class="back" href="#">← Accueil</a>
@@ -132,7 +135,6 @@ footer strong{color:#1B8A4C;}
 </div>
 </div>
 
-<!-- DOSSIER -->
 <div class="view" id="v-dossier">
 <div class="card">
 <a class="back" href="#">← Accueil</a>
@@ -141,7 +143,6 @@ footer strong{color:#1B8A4C;}
 </div>
 </div>
 
-<!-- RECHERCHE -->
 <div class="view" id="v-recherche">
 <div class="card">
 <a class="back" href="#">← Accueil</a>
@@ -153,10 +154,41 @@ footer strong{color:#1B8A4C;}
 <footer><p>Fait avec ❤️ pour les élèves de <strong>Guinée</strong></p></footer>
 <script>
 const API="https://generateur-ia-api.onrender.com/ask";
-const VUES=['etude','langues','dossier','recherche'];
+const VUES=['libre','langues','dossier','recherche'];
+const NIV=['7ème','8ème','9ème','10ème','11ème','Terminale'];
+const MAT=[['Maths','📐'],['Physique','⚡'],['Chimie','⚗️'],['Biologie','🌿'],['Français','📖'],['Histoire','🏛️'],['Géographie','🌍'],['ECM','🤝'],['Anglais','🇬🇧'],['Géologie','🪨'],['Économie','💰'],['Philosophie','💭']];
+const PROG={
+'7ème|Maths':['Multiples et diviseurs d’un entier naturel','Comparaison des nombres décimaux','Addition, soustraction, multiplication des décimaux','Division','Fractions','Proportionnalités','Nombres décimaux négatifs'],
+'7ème|Physique':['Propriétés physiques des états de la matière','Électricité'],
+'7ème|Chimie':['Introduction à la chimie','Transformations physiques et combustions','Utilisation des combustibles'],
+'10ème|Physique':['Optique','Électricité-Électronique','Mécanique'],
+'Terminale|Chimie':['Acides et bases en solution aqueuse','Cinétique chimique','Chimie organique']
+};
+function carte(href,ic,t,s){return '<a class="mcard" href="'+href+'"><span class="ic">'+ic+'</span><b>'+t+'</b>'+(s?'<small>'+s+'</small>':'')+'</a>';}
+function entete(retour,titre){return '<div class="card"><a class="back" href="'+(retour||'#')+'">'+(retour?'← Retour':'← Accueil')+'</a><h3>'+titre+'</h3></div>';}
+function etude(p){
+var n=parseInt(p[0],10),m=parseInt(p[1],10),c=parseInt(p[2],10),t=p[3],h='';
+if(!(n>=0&&n<NIV.length)){
+h=entete('','📚 Choisis ton niveau')+'<div class="menu below">'+NIV.map(function(x,i){return carte('#etude/'+i,'🎓',x);}).join('')+'</div><p class="libre"><a href="#libre">💬 Poser une question libre</a></p>';
+}else if(!(m>=0&&m<MAT.length)){
+h=entete('#etude','📚 '+NIV[n]+' : choisis la matière')+'<div class="menu below">'+MAT.map(function(x,i){return carte('#etude/'+n+'/'+i,x[1],x[0]);}).join('')+'</div>';
+}else{
+var ch=PROG[NIV[n]+'|'+MAT[m][0]]||[];
+var base='#etude/'+n+'/'+m;
+if(!(c>=0&&c<ch.length)){
+h=entete('#etude/'+n,MAT[m][1]+' '+MAT[m][0]+' · '+NIV[n]);
+h+=ch.length?'<div class="list">'+ch.map(function(x,i){return '<a class="chap" href="'+base+'/'+i+'"><b>'+(i+1)+'.</b> '+x+'</a>';}).join('')+'</div>':'<p class="soon-text pad">Les chapitres de cette matière arrivent bientôt.</p>';
+}else if(t!=='cours'&&t!=='exercices'){
+h=entete(base,(c+1)+'. '+ch[c])+'<div class="menu below">'+carte(base+'/'+c+'/cours','📖','Cours','Résumé et questions')+carte(base+'/'+c+'/exercices','✏️','Exercices','Application et TD')+'</div>';
+}else{
+h=entete(base+'/'+c,(t==='cours'?'📖 Cours : ':'✏️ Exercices : ')+ch[c])+'<p class="soon-text pad">'+(t==='cours'?'Le cours arrive bientôt.':'Les exercices arrivent bientôt.')+'</p>';
+}}
+document.getElementById('etude-box').innerHTML=h;
+}
 function route(){
-const h=location.hash.replace('#','');
-const v=VUES.includes(h)?h:'home';
+var p=location.hash.replace('#','').split('/'),r=p[0],v='home';
+if(r==='etude'){v='etude';etude(p.slice(1));}
+else if(VUES.indexOf(r)>-1){v=r;}
 document.querySelectorAll('.view').forEach(function(e){e.classList.toggle('on',e.id==='v-'+v);});
 window.scrollTo(0,0);
 }
