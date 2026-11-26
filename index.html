@@ -95,7 +95,7 @@ footer strong{color:#1B8A4C;}
 <select id="classe">
 <option value="">-- Choisis ta classe --</option>
 <option>7ème</option><option>8ème</option><option>9ème</option>
-<option>10ème</option><option>11ème</option><option>Terminale</option>
+<option>10ème</option><option>11ème</option><option>12ème</option><option>Terminale</option>
 </select>
 <label>Matière</label>
 <select id="matiere">
@@ -155,35 +155,58 @@ footer strong{color:#1B8A4C;}
 <script>
 const API="https://generateur-ia-api.onrender.com/ask";
 const VUES=['libre','langues','dossier','recherche'];
-const NIV=['7ème','8ème','9ème','10ème','11ème','Terminale'];
-const MAT=[['Maths','📐'],['Physique','⚡'],['Chimie','⚗️'],['Biologie','🌿'],['Français','📖'],['Histoire','🏛️'],['Géographie','🌍'],['ECM','🤝'],['Anglais','🇬🇧'],['Géologie','🪨'],['Économie','💰'],['Philosophie','💭']];
+const NIV=['7ème','8ème','9ème','10ème','11ème','12ème','Terminale'];
+const OPT=[['Sciences sociales','🧭'],['Sciences mathématiques','📐'],['Sciences expérimentales','🔬']];
+const MAT_COL=[['Maths','📐'],['Physique','⚡'],['Chimie','⚗️'],['Biologie','🌿'],['Français','📖'],['Histoire','🏛️'],['Géographie','🌍'],['ECM','🤝'],['Anglais','🇬🇧']];
+const MAT_LYC=MAT_COL.concat([['Géologie','🪨'],['Économie','💰'],['Philosophie','💭']]);
 const PROG={
-'7ème|Maths':['Multiples et diviseurs d’un entier naturel','Comparaison des nombres décimaux','Addition, soustraction, multiplication des décimaux','Division','Fractions','Proportionnalités','Nombres décimaux négatifs'],
+'7ème|Maths':{num:['Multiples et diviseurs d’un entier naturel','Comparaison des nombres décimaux','Addition, soustraction, multiplication des décimaux','Division','Fractions','Proportionnalités','Nombres décimaux négatifs'],geo:[]},
+'8ème|Maths':{num:['Calcul littéral','Nombres rationnels','Équations et inéquations','Approximations décimales d’un nombre','Résolution de problèmes','Statistiques'],geo:['Résoudre des problèmes de géométrie','Symétries','Distances','Triangle','Translations et vecteurs','Projection et repérage','Angle au centre et polygones réguliers','Rotations et homothéties','Pyramides et cônes, sections planes']},
+'10ème|Maths':{num:['Calcul littéral','Racines carrées','Calcul numérique','Équations et inéquations dans R','Systèmes d’équations et d’inéquations','Applications affines et linéaires','Statistiques'],geo:['Propriété de Thalès','Triangle rectangle et trigonométrie','Vecteurs','Coordonnées d’un vecteur','Équations d’une droite','Angles inscrits dans un cercle','Symétries et translations','Rotations et homothéties','Pyramides et cônes, sections planes']},
+'Terminale|Maths':{num:['Fonctions','Équations, inéquations et systèmes linéaires','Dénombrement','Limites et continuité','Dérivation','Études de fonctions','Suites numériques','Statistiques'],geo:['Barycentre','Angles orientés et trigonométrie','Géométrie analytique du plan','Isométries du plan','Homothéties et leurs utilisations','Orthogonalité dans l’espace','Vecteurs de l’espace','Géométrie analytique de l’espace']},
 '7ème|Physique':['Propriétés physiques des états de la matière','Électricité'],
 '7ème|Chimie':['Introduction à la chimie','Transformations physiques et combustions','Utilisation des combustibles'],
+'9ème|Chimie':['Système périodique des éléments chimiques','Étude des métaux','Corps moléculaires','Chimie quantitative'],
 '10ème|Physique':['Optique','Électricité-Électronique','Mécanique'],
 'Terminale|Chimie':['Acides et bases en solution aqueuse','Cinétique chimique','Chimie organique']
 };
+function ni(x){var v=parseInt(x,10);return isNaN(v)?-1:v;}
 function carte(href,ic,t,s){return '<a class="mcard" href="'+href+'"><span class="ic">'+ic+'</span><b>'+t+'</b>'+(s?'<small>'+s+'</small>':'')+'</a>';}
 function entete(retour,titre){return '<div class="card"><a class="back" href="'+(retour||'#')+'">'+(retour?'← Retour':'← Accueil')+'</a><h3>'+titre+'</h3></div>';}
+function show(h){document.getElementById('etude-box').innerHTML=h;}
 function etude(p){
-var n=parseInt(p[0],10),m=parseInt(p[1],10),c=parseInt(p[2],10),t=p[3],h='';
+var k=0,base='#etude',up='',n=ni(p[k++]);
 if(!(n>=0&&n<NIV.length)){
-h=entete('','📚 Choisis ton niveau')+'<div class="menu below">'+NIV.map(function(x,i){return carte('#etude/'+i,'🎓',x);}).join('')+'</div><p class="libre"><a href="#libre">💬 Poser une question libre</a></p>';
-}else if(!(m>=0&&m<MAT.length)){
-h=entete('#etude','📚 '+NIV[n]+' : choisis la matière')+'<div class="menu below">'+MAT.map(function(x,i){return carte('#etude/'+n+'/'+i,x[1],x[0]);}).join('')+'</div>';
-}else{
-var ch=PROG[NIV[n]+'|'+MAT[m][0]]||[];
-var base='#etude/'+n+'/'+m;
+show(entete('','📚 Choisis ton niveau')+'<div class="menu below">'+NIV.map(function(x,i){return carte(base+'/'+i,'🎓',x);}).join('')+'</div><p class="libre"><a href="#libre">💬 Poser une question libre</a></p>');return;}
+up=base;base+='/'+n;
+var ly=n>=4,o=0,ctx=NIV[n];
+if(ly){
+o=ni(p[k++]);
+if(!(o>=0&&o<OPT.length)){
+show(entete(up,'📚 '+ctx+' : choisis ton option')+'<div class="menu below">'+OPT.map(function(x,i){return carte(base+'/'+i,x[1],x[0]);}).join('')+'</div>');return;}
+up=base;base+='/'+o;ctx+=' · '+OPT[o][0];
+}
+var M=ly?MAT_LYC:MAT_COL,m=ni(p[k++]);
+if(!(m>=0&&m<M.length)){
+show(entete(up,'📚 '+ctx+' : choisis la matière')+'<div class="menu below">'+M.map(function(x,i){return carte(base+'/'+i,x[1],x[0]);}).join('')+'</div>');return;}
+up=base;base+='/'+m;
+var nom=M[m][0],data=PROG[NIV[n]+'|'+nom],ch;
+if(nom==='Maths'){
+var d=ni(p[k++]);
+if(d!==0&&d!==1){
+show(entete(up,M[m][1]+' Maths · '+ctx)+'<div class="menu below">'+carte(base+'/0','🔢','Numérique')+carte(base+'/1','📐','Géométrie')+'</div>');return;}
+up=base;base+='/'+d;
+ch=(data&&data[d?'geo':'num'])||[];
+ctx+=' · '+(d?'Géométrie':'Numérique');
+}else{ch=data||[];}
+var c=ni(p[k++]);
 if(!(c>=0&&c<ch.length)){
-h=entete('#etude/'+n,MAT[m][1]+' '+MAT[m][0]+' · '+NIV[n]);
-h+=ch.length?'<div class="list">'+ch.map(function(x,i){return '<a class="chap" href="'+base+'/'+i+'"><b>'+(i+1)+'.</b> '+x+'</a>';}).join('')+'</div>':'<p class="soon-text pad">Les chapitres de cette matière arrivent bientôt.</p>';
-}else if(t!=='cours'&&t!=='exercices'){
-h=entete(base,(c+1)+'. '+ch[c])+'<div class="menu below">'+carte(base+'/'+c+'/cours','📖','Cours','Résumé et questions')+carte(base+'/'+c+'/exercices','✏️','Exercices','Application et TD')+'</div>';
-}else{
-h=entete(base+'/'+c,(t==='cours'?'📖 Cours : ':'✏️ Exercices : ')+ch[c])+'<p class="soon-text pad">'+(t==='cours'?'Le cours arrive bientôt.':'Les exercices arrivent bientôt.')+'</p>';
-}}
-document.getElementById('etude-box').innerHTML=h;
+show(entete(up,M[m][1]+' '+nom+' · '+ctx)+(ch.length?'<div class="list">'+ch.map(function(x,i){return '<a class="chap" href="'+base+'/'+i+'"><b>'+(i+1)+'.</b> '+x+'</a>';}).join('')+'</div>':'<p class="soon-text pad">Les chapitres arrivent bientôt.</p>'));return;}
+up=base;base+='/'+c;
+var t=p[k];
+if(t!=='cours'&&t!=='exercices'){
+show(entete(up,(c+1)+'. '+ch[c])+'<div class="menu below">'+carte(base+'/cours','📖','Cours','Résumé et questions')+carte(base+'/exercices','✏️','Exercices','Application et TD')+'</div>');return;}
+show(entete(base,(t==='cours'?'📖 Cours : ':'✏️ Exercices : ')+ch[c])+'<p class="soon-text pad">'+(t==='cours'?'Le cours arrive bientôt.':'Les exercices arrivent bientôt.')+'</p>');
 }
 function route(){
 var p=location.hash.replace('#','').split('/'),r=p[0],v='home';
