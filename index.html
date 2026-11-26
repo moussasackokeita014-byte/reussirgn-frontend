@@ -1,4 +1,5 @@
 
+Pas de souci, je te mets le code directement ici. Appuie sur l'icône Copier en haut à droite du bloc ci-dessous. Si le bloc est trop long pour que ton téléphone le copie en une fois, dis-le-moi et je le couperai en deux parties.
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -46,6 +47,19 @@ button:disabled{background:#9ca3af;}
 .tag:hover{border-color:#1B8A4C;color:#1B8A4C;}
 footer{text-align:center;padding:22px 16px;color:#6b7280;font-size:12px;}
 footer strong{color:#1B8A4C;}
+
+/* Navigation entre les parties */
+.view{display:none;}
+.view.on{display:block;}
+.menu{margin:-20px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mcard{display:block;background:white;border:1.5px solid #e5e7eb;border-radius:16px;padding:20px 14px;text-align:center;text-decoration:none;color:#1a1a1a;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.mcard:active{border-color:#1B8A4C;}
+.mcard .ic{display:block;font-size:30px;margin-bottom:8px;}
+.mcard b{display:block;font-family:'Sora',sans-serif;font-size:15px;color:#1B8A4C;margin-bottom:4px;}
+.mcard small{display:block;font-size:12px;line-height:1.4;color:#6b7280;}
+.mcard .soon{display:inline-block;margin-top:8px;padding:2px 9px;background:#FEF6D8;color:#8a6d00;border-radius:20px;font-size:11px;font-weight:500;}
+.back{display:inline-block;margin-bottom:12px;font-size:13px;font-weight:500;color:#1B8A4C;text-decoration:none;}
+.soon-text{font-size:14px;line-height:1.7;color:#374151;}
 </style>
 </head>
 <body>
@@ -57,7 +71,21 @@ footer strong{color:#1B8A4C;}
 <h2>Apprends mieux,<br><span>réussis plus</span> 🎓</h2>
 <p>Programme officiel guinéen — 7ème à Terminale</p>
 </div>
+
+<!-- ACCUEIL -->
+<div class="view on" id="v-home">
+<div class="menu">
+<a class="mcard" href="#etude"><span class="ic">📚</span><b>Étude</b><small>Cours, exercices et questions</small></a>
+<a class="mcard" href="#langues"><span class="ic">🗣️</span><b>Langues</b><small>Apprends avec l’IA</small><span class="soon">Bientôt</span></a>
+<a class="mcard" href="#dossier"><span class="ic">📁</span><b>Dossier</b><small>CV, demande de stage…</small><span class="soon">Bientôt</span></a>
+<a class="mcard" href="#recherche"><span class="ic">🔎</span><b>Recherche</b><small>Scientifique ou libre</small><span class="soon">Bientôt</span></a>
+</div>
+</div>
+
+<!-- ÉTUDE -->
+<div class="view" id="v-etude">
 <div class="card">
+<a class="back" href="#">← Accueil</a>
 <h3>📚 Pose ta question</h3>
 <label>Ta classe</label>
 <select id="classe">
@@ -93,9 +121,47 @@ footer strong{color:#1B8A4C;}
 <div class="tag" onclick="fill('8ème','Histoire','Empire du Mali')">🏛️ Mali</div>
 </div>
 </div>
+</div>
+
+<!-- LANGUES -->
+<div class="view" id="v-langues">
+<div class="card">
+<a class="back" href="#">← Accueil</a>
+<h3>🗣️ Langues</h3>
+<p class="soon-text">Bientôt, tu pourras apprendre l’anglais, le français, l’arabe, l’allemand ou l’espagnol. L’IA évaluera ton niveau, puis te proposera des leçons et des exercices adaptés.</p>
+</div>
+</div>
+
+<!-- DOSSIER -->
+<div class="view" id="v-dossier">
+<div class="card">
+<a class="back" href="#">← Accueil</a>
+<h3>📁 Dossier</h3>
+<p class="soon-text">Bientôt, tu trouveras ici des exemples et des conseils pour ton CV et ta demande de stage, des modèles à modifier, et un générateur qui crée ton dossier à partir de tes informations.</p>
+</div>
+</div>
+
+<!-- RECHERCHE -->
+<div class="view" id="v-recherche">
+<div class="card">
+<a class="back" href="#">← Accueil</a>
+<h3>🔎 Recherche</h3>
+<p class="soon-text">Bientôt, tu pourras faire une recherche scientifique ou une recherche libre sur le sujet de ton choix.</p>
+</div>
+</div>
+
 <footer><p>Fait avec ❤️ pour les élèves de <strong>Guinée</strong></p></footer>
 <script>
 const API="https://generateur-ia-api.onrender.com/ask";
+const VUES=['etude','langues','dossier','recherche'];
+function route(){
+const h=location.hash.replace('#','');
+const v=VUES.includes(h)?h:'home';
+document.querySelectorAll('.view').forEach(function(e){e.classList.toggle('on',e.id==='v-'+v);});
+window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+route();
 function fill(c,m,q){document.getElementById('classe').value=c;document.getElementById('matiere').value=m;document.getElementById('question').value=q;}
 async function envoyer(){
 const c=document.getElementById('classe').value;
